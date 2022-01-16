@@ -1,6 +1,8 @@
-package com.sda.diary;
+package com.sda.diary.entry;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sda.diary.frontend.UserInterface;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -19,20 +21,13 @@ public class Application {
                 .buildSessionFactory();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        EntryRepository entryRepository = new EntryRepository(sessionFactory);
-        EntryService entryService = new EntryService(entryRepository);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        EntryRepositoryImpl entryRepositoryImpl = new EntryRepositoryImpl(sessionFactory);
+        EntryService entryService = new EntryService(entryRepositoryImpl, objectMapper);
         EntryController entryController = new EntryController(entryService, objectMapper);
 
-        String title = "my-super-title";
-        String content = "asd";
-        String data = String.format("{\"title\": \"%s\", \"content\": \"%s\"}", title, content);
-
-        // To robi Spring - przechwytuje żądanie HHTP i wywołuje metode
-        String response = entryController.createEntry(data);
-        System.out.println(response);
-
-        // HTTP GET: /entry
-        String responseTwo = entryController.getAllEntries();
-        System.out.println(responseTwo);
+        // symulacja interfejsu
+        UserInterface userInterface = new UserInterface(entryController);
+        userInterface.run();
     }
 }

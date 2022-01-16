@@ -1,4 +1,4 @@
-package com.sda.diary;
+package com.sda.diary.entry;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
@@ -7,11 +7,12 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
-@RequiredArgsConstructor
-public class EntryRepository {
+ @RequiredArgsConstructor
+public class EntryRepositoryImpl implements EntryRepository{
 
     private final SessionFactory sessionFactory;
 
+    @Override
     public List<Entry> findAll() {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
@@ -21,6 +22,7 @@ public class EntryRepository {
         return entries;
     }
 
+    @Override
     public Entry save(Entry entry) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
